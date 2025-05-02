@@ -12,6 +12,7 @@
         th { background-color: #f2f2f2; }
         button { padding: 10px 15px; margin-bottom: 20px; cursor: pointer; }
         textarea { width: 100%; height: 50px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -32,52 +33,69 @@
         </tr>
     </thead>
     <tbody id="taskBody">
-        <!-- Ide töltődnek be az adatok -->
+        <tr>
+            <td>888888</td>
+            <td>Ügyintézés (csak K. Sándor és J. Tomi)</td>
+            <td>Ügyintézés - Aselec Iroda</td>
+            <td>2023-02-21</td>
+            <td>2025-02-05</td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>
+        <tr>
+            <td>1910026</td>
+            <td>SW motor</td>
+            <td>GYSEV</td>
+            <td>2019-10-04</td>
+            <td></td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>
+        <tr>
+            <td>2003038</td>
+            <td>TC 32 motor</td>
+            <td>GYSEV Zrt</td>
+            <td>2020-03-10</td>
+            <td>2023-07-31</td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>
+        <tr>
+            <td>2008004</td>
+            <td>Új hajtómotor - MÁV</td>
+            <td>STADLER Magyarország Vasúti Karb. Kft</td>
+            <td>2020-08-03</td>
+            <td>2020-11-30</td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>
+        <tr>
+            <td>2008005</td>
+            <td>Új hajtómotor - MÁV</td>
+            <td>STADLER Magyarország Vasúti Karb. Kft</td>
+            <td>2020-08-03</td>
+            <td>2020-09-12</td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>
     </tbody>
 </table>
 
 <script>
-const tasks = [
-    { projektkod: "888888", leiras: "Ügyintézés (csak K. Sándor és J. Tomi)", tulajdonos: "Ügyintézés - Aselec Iroda", beerkezes: "2023-02-21", kiment: "2025-02-05" },
-    { projektkod: "1910026", leiras: "SW motor", tulajdonos: "GYSEV", beerkezes: "2019-10-04", kiment: "" },
-    { projektkod: "2003038", leiras: "TC 32 motor", tulajdonos: "GYSEV Zrt", beerkezes: "2020-03-10", kiment: "2023-07-31" },
-    { projektkod: "2008004", leiras: "Új hajtómotor - MÁV", tulajdonos: "STADLER Magyarország Vasúti Karb. Kft", beerkezes: "2020-08-03", kiment: "2020-11-30" },
-    { projektkod: "2008005", leiras: "Új hajtómotor - MÁV", tulajdonos: "STADLER Magyarország Vasúti Karb. Kft", beerkezes: "2020-08-03", kiment: "2020-09-12" }
-];
-
-let showFiltered = false;
-
-function loadTasks(data) {
-    const tbody = document.getElementById('taskBody');
-    tbody.innerHTML = "";
-    data.forEach(task => {
-        const row = `<tr>
-            <td>${task.projektkod}</td>
-            <td>${task.leiras}</td>
-            <td>${task.tulajdonos}</td>
-            <td>${task.beerkezes}</td>
-            <td>${task.kiment}</td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>`;
-        tbody.innerHTML += row;
-    });
-}
+let filtered = false;
 
 function toggleFilter() {
-    showFiltered = !showFiltered;
     const button = document.getElementById('filterButton');
-    if (showFiltered) {
-        const filtered = tasks.filter(task => task.kiment === "" || task.kiment == null);
-        loadTasks(filtered);
-        button.textContent = "Összes munka megjelenítése";
-    } else {
-        loadTasks(tasks);
-        button.textContent = "Bent lévő munkák megjelenítése";
-    }
-}
+    const rows = document.querySelectorAll('#taskBody tr');
 
-// Betöltés alapból
-loadTasks(tasks);
+    filtered = !filtered;
+
+    rows.forEach(row => {
+        const kiment = row.children[4].textContent.trim();
+        if (filtered && kiment !== "") {
+            row.classList.add('hidden');
+        } else {
+            row.classList.remove('hidden');
+        }
+    });
+
+    button.textContent = filtered ? "Összes munka megjelenítése" : "Bent lévő munkák megjelenítése";
+}
 </script>
 
 </body>
