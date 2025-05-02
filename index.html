@@ -18,75 +18,24 @@
 <body>
 
 <h1>Tételek</h1>
-
 <button onclick="toggleFilter()" id="filterButton">Bent lévő munkák megjelenítése</button>
 
 <table id="taskTable">
     <thead>
-        <tr>
-            <th>Projektkód</th>
-            <th>Munka leírása</th>
-            <th>Tulajdonos</th>
-            <th>Beérkezés dátuma</th>
-            <th>Kiment dátuma</th>
-            <th>Megjegyzés</th>
-        </tr>
+        <tr id="headerRow"></tr>
     </thead>
-    <tbody id="taskBody">
-        <tr>
-            <td>888888</td>
-            <td>Ügyintézés (csak K. Sándor és J. Tomi)</td>
-            <td>Ügyintézés - Aselec Iroda</td>
-            <td>2023-02-21</td>
-            <td>2025-02-05</td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>
-        <tr>
-            <td>1910026</td>
-            <td>SW motor</td>
-            <td>GYSEV</td>
-            <td>2019-10-04</td>
-            <td></td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>
-        <tr>
-            <td>2003038</td>
-            <td>TC 32 motor</td>
-            <td>GYSEV Zrt</td>
-            <td>2020-03-10</td>
-            <td>2023-07-31</td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>
-        <tr>
-            <td>2008004</td>
-            <td>Új hajtómotor - MÁV</td>
-            <td>STADLER Magyarország Vasúti Karb. Kft</td>
-            <td>2020-08-03</td>
-            <td>2020-11-30</td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>
-        <tr>
-            <td>2008005</td>
-            <td>Új hajtómotor - MÁV</td>
-            <td>STADLER Magyarország Vasúti Karb. Kft</td>
-            <td>2020-08-03</td>
-            <td>2020-09-12</td>
-            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
-        </tr>
-    </tbody>
+    <tbody id="taskBody"></tbody>
 </table>
 
 <script>
 let filtered = false;
 
 function toggleFilter() {
-    const button = document.getElementById('filterButton');
     const rows = document.querySelectorAll('#taskBody tr');
-
     filtered = !filtered;
 
     rows.forEach(row => {
-        const kiment = row.children[4].textContent.trim();
+        const kiment = row.children[4]?.textContent.trim();
         if (filtered && kiment !== "") {
             row.classList.add('hidden');
         } else {
@@ -94,8 +43,43 @@ function toggleFilter() {
         }
     });
 
-    button.textContent = filtered ? "Összes munka megjelenítése" : "Bent lévő munkák megjelenítése";
+    document.getElementById('filterButton').textContent = filtered
+        ? "Összes munka megjelenítése"
+        : "Bent lévő munkák megjelenítése";
 }
+
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQJ_smm3bDbvPkU6FAKROqjvYlrufAcSMU-V-m5aQg7SytksFR8xqE4ar0oNAJb4KbrkVLgXvwUoQz7/pub?output=csv")
+    .then(response => response.text())
+    .then(csv => {
+        const rows = csv.split("\n").map(row => row.split(","));
+        const headerRow = document.getElementById('headerRow');
+        const body = document.getElementById('taskBody');
+
+        headerRow.innerHTML = "";
+        rows[0].forEach(cell => {
+            const th = document.createElement('th');
+            th.textContent = cell;
+            headerRow.appendChild(th);
+        });
+
+        for (let i = 1; i < rows.length; i++) {
+            const tr = document.createElement('tr');
+            rows[i].forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            const textarea = document.createElement('textarea');
+            const td = document.createElement('td');
+            td.appendChild(textarea);
+            tr.appendChild(td);
+
+            body.appendChild(tr);
+        }
+    })
+    .catch(error => {
+        console.error("Hiba a CSV betöltése közben:", error);
+    });
 </script>
 
 </body>
