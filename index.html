@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tételek - Bent lévő munkák szűrése</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 10px 15px; margin-bottom: 20px; cursor: pointer; }
+        textarea { width: 100%; height: 50px; }
+    </style>
+</head>
+<body>
+
+<h1>Tételek</h1>
+
+<button onclick="toggleFilter()" id="filterButton">Bent lévő munkák megjelenítése</button>
+
+<table id="taskTable">
+    <thead>
+        <tr>
+            <th>Projektkód</th>
+            <th>Munka leírása</th>
+            <th>Tulajdonos</th>
+            <th>Beérkezés dátuma</th>
+            <th>Kiment dátuma</th>
+            <th>Megjegyzés</th>
+        </tr>
+    </thead>
+    <tbody id="taskBody">
+        <!-- Ide töltődnek be az adatok -->
+    </tbody>
+</table>
+
+<script>
+const tasks = [
+    { projektkod: "888888", leiras: "Ügyintézés (csak K. Sándor és J. Tomi)", tulajdonos: "Ügyintézés - Aselec Iroda", beerkezes: "2023-02-21", kiment: "2025-02-05" },
+    { projektkod: "1910026", leiras: "SW motor", tulajdonos: "GYSEV", beerkezes: "2019-10-04", kiment: "" },
+    { projektkod: "2003038", leiras: "TC 32 motor", tulajdonos: "GYSEV Zrt", beerkezes: "2020-03-10", kiment: "2023-07-31" },
+    { projektkod: "2008004", leiras: "Új hajtómotor - MÁV", tulajdonos: "STADLER Magyarország Vasúti Karb. Kft", beerkezes: "2020-08-03", kiment: "2020-11-30" },
+    { projektkod: "2008005", leiras: "Új hajtómotor - MÁV", tulajdonos: "STADLER Magyarország Vasúti Karb. Kft", beerkezes: "2020-08-03", kiment: "2020-09-12" }
+];
+
+let showFiltered = false;
+
+function loadTasks(data) {
+    const tbody = document.getElementById('taskBody');
+    tbody.innerHTML = "";
+    data.forEach(task => {
+        const row = `<tr>
+            <td>${task.projektkod}</td>
+            <td>${task.leiras}</td>
+            <td>${task.tulajdonos}</td>
+            <td>${task.beerkezes}</td>
+            <td>${task.kiment}</td>
+            <td><textarea placeholder="Megjegyzés ide..."></textarea></td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+function toggleFilter() {
+    showFiltered = !showFiltered;
+    const button = document.getElementById('filterButton');
+    if (showFiltered) {
+        const filtered = tasks.filter(task => task.kiment === "" || task.kiment == null);
+        loadTasks(filtered);
+        button.textContent = "Összes munka megjelenítése";
+    } else {
+        loadTasks(tasks);
+        button.textContent = "Bent lévő munkák megjelenítése";
+    }
+}
+
+// Betöltés alapból
+loadTasks(tasks);
+</script>
+
+</body>
+</html>
