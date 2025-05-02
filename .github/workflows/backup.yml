@@ -1,0 +1,23 @@
+name: Daily Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # minden nap 2:00-kor UTC idő szerint
+  workflow_dispatch:      # manuális indítás is engedélyezett
+
+jobs:
+  zip-and-archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository klónozása
+        uses: actions/checkout@v3
+
+      - name: ZIP fájl létrehozása
+        run: zip -r backup-$(date +'%Y-%m-%d').zip ./*
+
+      - name: ZIP fájl feltöltése a GitHub Actions tárolóba
+        uses: actions/upload-artifact@v3
+        with:
+          name: napi-mentes
+          path: backup-*.zip
+
